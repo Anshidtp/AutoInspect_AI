@@ -1,0 +1,18 @@
+# Core Dependencies
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+
+# ML/AI
+ultralytics
+opencv-python
+torch
+torchvision
+pillow
+numpy
+
+# Database
+sqlalchemy
+alembic
