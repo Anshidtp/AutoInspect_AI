@@ -16,3 +16,4 @@ numpy
 # Database
 sqlalchemy
 alembic
+aiofiles==25.1.0
