@@ -44,4 +44,4 @@ settings = Settings()
 # Ensure required directories exist
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 os.makedirs("./data", exist_ok=True)
-os.makedirs("./ml_models", exist_ok=True)
+# os.makedirs("./ml_models", exist_ok=True)
