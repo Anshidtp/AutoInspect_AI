@@ -1,7 +1,3 @@
-"""
-Cost estimation service layer.
-Handles cost calculation and database storage.
-"""
 from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
