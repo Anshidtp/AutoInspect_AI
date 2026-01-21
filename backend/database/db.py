@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from backend.config.settings import Settings
+from backend.database import db_detection
 
 # Create database engine
 engine = create_engine(
@@ -38,5 +39,5 @@ def init_db():
     Initialize database by creating all tables.
     Should be called once when the application starts.
     """
-    from backend.schemas import detect_schema, estimation_schema  # Import all models
+    from backend.schemas import estimate_schema  # Import all models
     Base.metadata.create_all(bind=engine)
