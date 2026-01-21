@@ -1,7 +1,3 @@
-"""
-Repair cost estimation module.
-Calculates repair costs based on detected damages.
-"""
 import json
 from pathlib import Path
 from typing import List, Dict, Optional

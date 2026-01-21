@@ -1,7 +1,3 @@
-"""
-YOLO-based car damage detection module.
-Handles model loading, inference, and result parsing.
-"""
 from ultralytics import YOLO
 import numpy as np
 from typing import List, Dict, Tuple, Optional
