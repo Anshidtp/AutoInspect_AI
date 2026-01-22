@@ -13,7 +13,7 @@ router = APIRouter(prefix="/detections", tags=["Detection"])
 @router.post("/", response_model=DetectionResponse, status_code=201)
 async def detect_damage(
     file: UploadFile = File(..., description="Image file to analyze"),
-    confidence_threshold: Optional[float] = Form(None, ge=0.0, le=1.0),
+    confidence_threshold = 0.2,
     detect_severity: bool = Form(True),
     db: Session = Depends(get_db)
 ):

@@ -1,0 +1,222 @@
+{
+  "damaged_head_light": {
+    "minor": {
+      "parts": 150,
+      "labor_hours": 0.5,
+      "paint": 0,
+      "description": "Minor headlight damage - lens scratches or small cracks"
+    },
+    "moderate": {
+      "parts": 350,
+      "labor_hours": 1.5,
+      "paint": 0,
+      "description": "Moderate headlight damage - cracked lens, requires replacement"
+    },
+    "severe": {
+      "parts": 600,
+      "labor_hours": 2.0,
+      "paint": 0,
+      "description": "Severe headlight damage - complete assembly replacement, LED/HID damage"
+    }
+  },
+  "damaged_hood": {
+    "minor": {
+      "parts": 100,
+      "labor_hours": 2.0,
+      "paint": 250,
+      "description": "Minor hood damage - small dents, surface scratches"
+    },
+    "moderate": {
+      "parts": 300,
+      "labor_hours": 4.0,
+      "paint": 500,
+      "description": "Moderate hood damage - major dents, requires panel beating"
+    },
+    "severe": {
+      "parts": 800,
+      "labor_hours": 6.0,
+      "paint": 700,
+      "description": "Severe hood damage - replacement required, frame damage"
+    }
+  },
+  "damaged_trunk": {
+    "minor": {
+      "parts": 100,
+      "labor_hours": 2.0,
+      "paint": 250,
+      "description": "Minor trunk damage - small dents, surface damage"
+    },
+    "moderate": {
+      "parts": 350,
+      "labor_hours": 4.0,
+      "paint": 500,
+      "description": "Moderate trunk damage - major dents, alignment issues"
+    },
+    "severe": {
+      "parts": 900,
+      "labor_hours": 6.0,
+      "paint": 700,
+      "description": "Severe trunk damage - replacement needed, latch damage"
+    }
+  },
+  "damaged_window": {
+    "minor": {
+      "parts": 200,
+      "labor_hours": 1.0,
+      "paint": 0,
+      "description": "Minor window damage - small chips, scratches"
+    },
+    "moderate": {
+      "parts": 350,
+      "labor_hours": 2.0,
+      "paint": 0,
+      "description": "Moderate window damage - cracks requiring replacement"
+    },
+    "severe": {
+      "parts": 500,
+      "labor_hours": 2.5,
+      "paint": 0,
+      "description": "Severe window damage - shattered, complete replacement"
+    }
+  },
+  "damaged_windscreen": {
+    "minor": {
+      "parts": 250,
+      "labor_hours": 1.5,
+      "paint": 0,
+      "description": "Minor windscreen damage - small chips (repairable)"
+    },
+    "moderate": {
+      "parts": 450,
+      "labor_hours": 2.5,
+      "paint": 0,
+      "description": "Moderate windscreen damage - crack requiring replacement"
+    },
+    "severe": {
+      "parts": 800,
+      "labor_hours": 3.0,
+      "paint": 0,
+      "description": "Severe windscreen damage - shattered, ADAS calibration needed"
+    }
+  },
+  "damaged_bumper": {
+    "minor": {
+      "parts": 150,
+      "labor_hours": 1.5,
+      "paint": 200,
+      "description": "Minor bumper damage - scratches, scuffs"
+    },
+    "moderate": {
+      "parts": 400,
+      "labor_hours": 3.0,
+      "paint": 400,
+      "description": "Moderate bumper damage - cracks, dents, misalignment"
+    },
+    "severe": {
+      "parts": 750,
+      "labor_hours": 5.0,
+      "paint": 600,
+      "description": "Severe bumper damage - replacement required, sensor damage"
+    }
+  },
+  "damaged_door": {
+    "minor": {
+      "parts": 100,
+      "labor_hours": 2.0,
+      "paint": 300,
+      "description": "Minor door damage - small dents, scratches"
+    },
+    "moderate": {
+      "parts": 400,
+      "labor_hours": 5.0,
+      "paint": 600,
+      "description": "Moderate door damage - major dents, panel work needed"
+    },
+    "severe": {
+      "parts": 1200,
+      "labor_hours": 8.0,
+      "paint": 800,
+      "description": "Severe door damage - door skin replacement or full door replacement"
+    }
+  },
+  "damaged_fender": {
+    "minor": {
+      "parts": 100,
+      "labor_hours": 2.0,
+      "paint": 250,
+      "description": "Minor fender damage - small dents, scratches"
+    },
+    "moderate": {
+      "parts": 350,
+      "labor_hours": 4.0,
+      "paint": 500,
+      "description": "Moderate fender damage - major dents, creases"
+    },
+    "severe": {
+      "parts": 700,
+      "labor_hours": 6.0,
+      "paint": 650,
+      "description": "Severe fender damage - replacement required, structural damage"
+    }
+  },
+  "damaged_mirror_glass": {
+    "minor": {
+      "parts": 80,
+      "labor_hours": 0.5,
+      "paint": 0,
+      "description": "Minor mirror damage - glass replacement only"
+    },
+    "moderate": {
+      "parts": 200,
+      "labor_hours": 1.0,
+      "paint": 50,
+      "description": "Moderate mirror damage - housing damage, paint needed"
+    },
+    "severe": {
+      "parts": 400,
+      "labor_hours": 1.5,
+      "paint": 100,
+      "description": "Severe mirror damage - complete assembly replacement, power/heated features"
+    }
+  },
+  "dent_or_scratch": {
+    "minor": {
+      "parts": 0,
+      "labor_hours": 1.0,
+      "paint": 150,
+      "description": "Minor dent or scratch - paintless dent repair, light buffing"
+    },
+    "moderate": {
+      "parts": 75,
+      "labor_hours": 2.5,
+      "paint": 350,
+      "description": "Moderate dent or scratch - body filler, refinishing"
+    },
+    "severe": {
+      "parts": 200,
+      "labor_hours": 5.0,
+      "paint": 600,
+      "description": "Severe dent or scratch - extensive bodywork, panel replacement consideration"
+    }
+  },
+  "missing_grille": {
+    "minor": {
+      "parts": 150,
+      "labor_hours": 0.5,
+      "paint": 0,
+      "description": "Minor grille damage - small section missing, clips damaged"
+    },
+    "moderate": {
+      "parts": 300,
+      "labor_hours": 1.0,
+      "paint": 0,
+      "description": "Moderate grille damage - partial grille replacement"
+    },
+    "severe": {
+      "parts": 500,
+      "labor_hours": 1.5,
+      "paint": 100,
+      "description": "Severe grille damage - complete grille assembly replacement, chrome/painted finish"
+    }
+  }
+}

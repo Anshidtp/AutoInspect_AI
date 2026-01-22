@@ -21,11 +21,11 @@ class Settings(BaseSettings):
     # File Upload
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB
     UPLOAD_DIR: str = "./uploads"
-    ALLOWED_EXTENSIONS: List[str] = ["jpg", "jpeg", "png"]
+    ALLOWED_EXTENSIONS: List[str] = ["jpg", "jpeg", "png"] 
     
     # ML Model
     MODEL_PATH: str = "model/best.pt"
-    MODEL_CONFIDENCE_THRESHOLD: float = 0.5
+    MODEL_CONFIDENCE_THRESHOLD: float = 0.2
     MODEL_IOU_THRESHOLD: float = 0.45
     
     # Cost Estimation

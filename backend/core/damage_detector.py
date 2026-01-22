@@ -12,26 +12,55 @@ logger = logging.getLogger(__name__)
 class DamageDetector:
     """
     Car damage detector using YOLOv8.
-    Detects various types of car damage and classifies severity.
+    Detects 11 types of car damage and classifies severity.
     """
     
-    # Damage type mappings (customize based on your trained model)
+    # Damage type mappings (matches your trained model classes)
     DAMAGE_CLASSES = {
-        0: "dent",
-        1: "scratch",
-        2: "crack",
-        3: "broken_light",
-        4: "broken_windshield",
-        5: "broken_mirror",
-        6: "flat_tire",
-        7: "bumper_damage"
+        0: "damaged_head_light",
+        1: "damaged_hood",
+        2: "damaged_trunk",
+        3: "damaged_window",
+        4: "damaged_windscreen",
+        5: "damaged_bumper",
+        6: "damaged_door",
+        7: "damaged_fender",
+        8: "damaged_mirror_glass",
+        9: "dent_or_scratch",
+        10: "missing_grille"
     }
     
-    # Car part detection (optional, if your model supports it)
-    CAR_PARTS = {
-        "front_bumper", "rear_bumper", "hood", "door", 
-        "fender", "mirror", "headlight", "taillight",
-        "windshield", "window", "tire", "wheel"
+    # Reverse mapping for easy lookup
+    CLASS_TO_ID = {v: k for k, v in DAMAGE_CLASSES.items()}
+    
+    # Car part mappings (derived from damage type)
+    PART_MAPPING = {
+        "damaged_head_light": "headlight",
+        "damaged_hood": "hood",
+        "damaged_trunk": "trunk",
+        "damaged_window": "window",
+        "damaged_windscreen": "windscreen",
+        "damaged_bumper": "bumper",
+        "damaged_door": "door",
+        "damaged_fender": "fender",
+        "damaged_mirror_glass": "mirror",
+        "dent_or_scratch": None,  # Will infer from position
+        "missing_grille": "grille"
+    }
+    
+    # Severity rules based on damage type
+    SEVERITY_RULES = {
+        "damaged_windscreen": "severe",      # Safety critical
+        "damaged_window": "moderate",
+        "damaged_head_light": "moderate",    # Affects visibility
+        "missing_grille": "minor",
+        "damaged_mirror_glass": "moderate",
+        "damaged_hood": "moderate",
+        "damaged_trunk": "moderate",
+        "damaged_door": "moderate",
+        "damaged_fender": "moderate",
+        "damaged_bumper": "moderate",
+        "dent_or_scratch": None  # Will determine from size
     }
     
     def __init__(self, model_path: Optional[str] = None):
@@ -47,18 +76,25 @@ class DamageDetector:
         self.model = None
         self.image_processor = ImageProcessor()
         
-        # Load model if path exists
-        if Path(self.model_path).exists():
-            self._load_model()
-        else:
-            logger.warning(f"Model not found at {self.model_path}. Using default YOLOv8n.")
-            self.model = YOLO('yolov8n.pt')  # Fallback to pretrained model
+        # Load model
+        self._load_model()
     
     def _load_model(self):
         """Load YOLO model from file."""
         try:
-            self.model = YOLO(self.model_path)
-            logger.info(f"Loaded YOLO model from {self.model_path}")
+            if Path(self.model_path).exists():
+                self.model = YOLO(self.model_path)
+                logger.info(f"✓ Loaded trained model from {self.model_path}")
+                
+                # Verify model classes match
+                model_names = self.model.names
+                logger.info(f"Model has {len(model_names)} classes: {list(model_names.values())}")
+                
+                if len(model_names) != 11:
+                    logger.warning(f"Expected 11 classes, model has {len(model_names)}")
+            else:
+                logger.error(f"Model not found at {self.model_path}")
+                raise FileNotFoundError(f"Model file not found: {self.model_path}")
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             raise
@@ -97,8 +133,8 @@ class DamageDetector:
         # Parse results
         detections = self._parse_results(results[0], image.shape)
         
-        # Add severity classification
-        detections = [self._classify_severity(det) for det in detections]
+        # Add severity classification and affected parts
+        detections = [self._classify_damage(det) for det in detections]
         
         return detections
     
@@ -138,8 +174,8 @@ class DamageDetector:
                 width, height
             )
             
-            # Get damage type
-            damage_type = self.DAMAGE_CLASSES.get(cls_id, f"unknown_{cls_id}")
+            # Get damage type from model's class names
+            damage_type = self.model.names[cls_id]
             
             detection = {
                 "damage_type": damage_type,
@@ -155,68 +191,113 @@ class DamageDetector:
         
         return detections
     
-    def _classify_severity(self, detection: Dict) -> Dict:
+    def _classify_damage(self, detection: Dict) -> Dict:
         """
-        Classify damage severity based on type and size.
+        Classify damage severity and identify affected part.
         
         Args:
             detection: Detection dictionary
             
         Returns:
-            Detection with severity added
+            Detection with severity and affected_part added
         """
         damage_type = detection["damage_type"]
         bbox_area = detection["bbox_width"] * detection["bbox_height"]
         
-        # Severity rules (customize based on your requirements)
-        if damage_type in ["broken_windshield", "broken_light"]:
-            severity = "severe"
-        elif damage_type in ["crack", "broken_mirror"]:
-            severity = "moderate"
-        elif bbox_area > 0.1:  # Large damage area
-            severity = "severe"
-        elif bbox_area > 0.05:
-            severity = "moderate"
-        else:
-            severity = "minor"
-        
+        # Determine severity
+        severity = self._determine_severity(damage_type, bbox_area)
         detection["severity"] = severity
         
-        # Infer affected part (basic heuristic based on position)
-        detection["affected_part"] = self._infer_car_part(detection)
+        # Determine affected part
+        affected_part = self._determine_affected_part(detection)
+        detection["affected_part"] = affected_part
         
         return detection
     
-    def _infer_car_part(self, detection: Dict) -> Optional[str]:
+    def _determine_severity(self, damage_type: str, bbox_area: float) -> str:
         """
-        Infer which car part is damaged based on bbox position.
+        Determine severity based on damage type and size.
+        
+        Args:
+            damage_type: Type of damage
+            bbox_area: Normalized area of bounding box (0-1)
+            
+        Returns:
+            Severity level: "minor", "moderate", or "severe"
+        """
+        # Check if damage type has a fixed severity rule
+        if damage_type in self.SEVERITY_RULES:
+            fixed_severity = self.SEVERITY_RULES[damage_type]
+            if fixed_severity:
+                return fixed_severity
+        
+        # For dent_or_scratch and other variable severities, use size
+        if bbox_area > 0.15:  # Large damage (>15% of image)
+            return "severe"
+        elif bbox_area > 0.05:  # Medium damage (5-15% of image)
+            return "moderate"
+        else:  # Small damage (<5% of image)
+            return "minor"
+    
+    def _determine_affected_part(self, detection: Dict) -> str:
+        """
+        Determine which car part is damaged.
+        
+        Args:
+            detection: Detection dictionary with bbox and damage_type
+            
+        Returns:
+            Car part name
+        """
+        damage_type = detection["damage_type"]
+        
+        # Check if damage type directly maps to a part
+        if damage_type in self.PART_MAPPING:
+            part = self.PART_MAPPING[damage_type]
+            if part:
+                return part
+        
+        # For dent_or_scratch, infer from position
+        return self._infer_part_from_position(detection)
+    
+    def _infer_part_from_position(self, detection: Dict) -> str:
+        """
+        Infer car part based on bounding box position in image.
         
         Args:
             detection: Detection dictionary with bbox
             
         Returns:
-            Estimated car part name or None
+            Estimated car part name
         """
-        x, y = detection["bbox_x"], detection["bbox_y"]
-        damage_type = detection["damage_type"]
+        x = detection["bbox_x"] + detection["bbox_width"] / 2  # Center X
+        y = detection["bbox_y"] + detection["bbox_height"] / 2  # Center Y
         
-        # Simple heuristic based on vertical position
-        if damage_type == "broken_windshield":
-            return "windshield"
-        elif damage_type in ["broken_light", "headlight"]:
-            return "headlight" if y < 0.5 else "taillight"
-        elif damage_type == "flat_tire":
-            return "tire"
-        elif damage_type == "broken_mirror":
-            return "mirror"
-        elif y < 0.3:  # Top third
-            return "hood" if x < 0.5 else "roof"
-        elif y < 0.7:  # Middle third
-            return "door"
-        else:  # Bottom third
-            return "front_bumper" if x < 0.5 else "rear_bumper"
+        # Simple heuristic based on position
+        # Assumes car is photographed from side/front view
         
-        return None
+        # Vertical zones
+        if y < 0.25:  # Top 25%
+            return "roof"
+        elif y < 0.5:  # Upper middle
+            if x < 0.3:
+                return "hood"
+            elif x > 0.7:
+                return "trunk"
+            else:
+                return "window"
+        elif y < 0.75:  # Lower middle
+            if x < 0.3:
+                return "front_fender"
+            elif x > 0.7:
+                return "rear_fender"
+            else:
+                return "door"
+        else:  # Bottom 25%
+            if x < 0.5:
+                return "front_bumper"
+            else:
+                return "rear_bumper"
     
     def get_model_info(self) -> Dict:
         """
@@ -227,9 +308,30 @@ class DamageDetector:
         """
         return {
             "model_path": str(self.model_path),
-            "model_type": "YOLOv11",
+            "model_type": "YOLOv8",
             "num_classes": len(self.DAMAGE_CLASSES),
             "damage_classes": self.DAMAGE_CLASSES,
+            "class_names": list(self.DAMAGE_CLASSES.values()),
             "confidence_threshold": self.confidence_threshold,
             "iou_threshold": self.iou_threshold
         }
+    
+    def get_class_distribution(self, detections: List[Dict]) -> Dict[str, int]:
+        """
+        Get distribution of detected damage types.
+        
+        Args:
+            detections: List of detection dictionaries
+            
+        Returns:
+            Dictionary mapping damage type to count
+        """
+        distribution = {name: 0 for name in self.DAMAGE_CLASSES.values()}
+        
+        for det in detections:
+            damage_type = det["damage_type"]
+            if damage_type in distribution:
+                distribution[damage_type] += 1
+        
+        # Remove zero counts
+        return {k: v for k, v in distribution.items() if v > 0}
