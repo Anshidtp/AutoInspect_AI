@@ -17,9 +17,9 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                AI Car Damage Detector
+                AutoInspect AI
               </h1>
-              <p className="text-sm text-gray-600">Powered by YOLOv8 Intelligence</p>
+              <p className="text-sm text-gray-600">Powered by Scipy Technologies</p>
             </div>
           </motion.div>
 
