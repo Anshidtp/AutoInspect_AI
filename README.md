@@ -15,6 +15,14 @@
 </div>
 
 ---
+## ✨ Demo
+<video src="https://github.com/user-attachments/assets/95ab80f8-9042-49ef-9c97-7390cee71022" controls playsinline></video>
+
+
+
+
+
+---
 
 ## 📋 Table of Contents
 
@@ -81,25 +89,7 @@ This project provides an end-to-end solution for automated car damage assessment
 
 ## 🏗️ Architecture
 
-```
-┌─────────────┐      HTTP/REST      ┌──────────────┐
-│   React     │ ◄──────────────────► │   FastAPI    │
-│  Frontend   │      JSON API       │   Backend    │
-└─────────────┘                     └──────────────┘
-                                           │
-                                           ├─► YOLOv11 Model
-                                           ├─► SQLite Database
-                                           └─► Cost Estimator
-
-Flow:
-1. User uploads image via React UI
-2. Frontend sends to FastAPI endpoint
-3. Backend processes with YOLOv8
-4. Detections saved to database
-5. Cost estimation calculated
-6. Results returned to frontend
-7. Beautiful visualization displayed
-```
+![diagram]("https://github.com/Anshidtp/AutoInspect_AI/blob/main/samples/flowchart.png")
 
 ---
 
