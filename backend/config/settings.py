@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     # Application
-    APP_NAME: str = "Car Damage Detection API"
+    APP_NAME: str = "AutoInspect_AI API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
     
